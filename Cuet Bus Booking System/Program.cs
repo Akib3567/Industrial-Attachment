@@ -1,7 +1,19 @@
+using Cuet_Bus_Booking_System.Data;
+using Cuet_Bus_Booking_System.Repository;
+using Microsoft.AspNetCore.Connections;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<IDbContext>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    return new DapperDbContext(connectionString!);
+});
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
