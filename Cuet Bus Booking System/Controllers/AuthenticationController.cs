@@ -29,18 +29,14 @@ namespace Cuet_Bus_Booking_System.Controllers
         {
             string emailPattern = @"^u\d{7}@student\.cuet\.ac\.bd$";
 
-            // Check if the email matches the CUET format
             if (!Regex.IsMatch(Email, emailPattern))
             {
                 ModelState.AddModelError("Email", "Please enter a valid CUET student email (e.g., u1234567@student.cuet.ac.bd).");
-                return View(); // Return back to the Signup form with the error message
+                return View(); 
             }
 
-            // Here you would save the data (e.g., in a database)
-            // For now, let's just log the data for demonstration
             _logger.LogInformation($"Name: {Name}, Email: {Email}, Password: {Password}, StudentId: {StudentId}");
 
-            // Redirect to Login page after successful signup
             return RedirectToAction("Login");
         }
 

@@ -13,7 +13,7 @@ namespace Cuet_Bus_Booking_System.Controllers
             _logger = logger;
         }
 
-        public IActionResult Login()
+        public IActionResult index()
         {
             return View();
         }
