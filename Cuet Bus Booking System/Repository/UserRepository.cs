@@ -1,7 +1,6 @@
 ﻿using Cuet_Bus_Booking_System.Data;
 using Cuet_Bus_Booking_System.Models;
 using Dapper;
-using Microsoft.AspNetCore.Connections;
 
 namespace Cuet_Bus_Booking_System.Repository
 {
@@ -14,34 +13,72 @@ namespace Cuet_Bus_Booking_System.Repository
             _dbContext = dbContext;
         }
 
-        public async Task<int> CreateAsync(User user)
+        public async Task<int> BookSeat(BookingRequest booking)
         {
-            using var connection = _dbContext.CreateConnection();
-            string sql = @"INSERT INTO Users (StudentId, Name, Email, Password) 
-                          VALUES (@StudentId, @Name, @Email, @Password);
-                          SELECT CAST(SCOPE_IDENTITY() as int)";
-
-            return await connection.QuerySingleAsync<int>(sql, new
+            try
             {
-                user.StudentId,
-                user.Name,
-                user.Email,
-                user.Password
-            });
+                using var connection = _dbContext.CreateConnection();
+                string sql = @"INSERT INTO Bookings (UserId, BusId, SeatNumber, BookingDate) 
+                              VALUES (@UserId, @BusId, @SeatNumber, GETDATE());
+                              SELECT CAST(SCOPE_IDENTITY() as int)";
+                return await connection.QuerySingleAsync<int>(sql, new
+                {
+                    booking.UserId,
+                    booking.BusId,
+                    booking.SeatNumber
+                });
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
         }
 
-        public async Task<User> LoginAsync(User user)
+        public async Task<IEnumerable<BookingDetails>> GetUserBookings(int userId)
         {
-            using var connection = _dbContext.CreateConnection();
-            string sql = @"SELECT * FROM [Users] WHERE Email = @Email AND Password = @Password";
-
-            var res =  await connection.QueryFirstOrDefaultAsync<User>(sql, new
+            try
             {
-                user.Email,
-                user.Password
-            });
+                using var connection = _dbContext.CreateConnection();
+                string sql = @"SELECT b.BookingId, b.UserId, b.BusId, bs.BusName, 
+                              b.SeatNumber, bs.ScheduleTime, b.BookingDate
+                              FROM Bookings b
+                              INNER JOIN Buses bs ON b.BusId = bs.BusId
+                              WHERE b.UserId = @UserId
+                              ORDER BY b.BookingDate DESC";
+                return await connection.QueryAsync<BookingDetails>(sql, new { UserId = userId });
+            }
+            catch (Exception ex)
+            {
+                return Enumerable.Empty<BookingDetails>();
+            }
+        }
 
-            return res;
+        public async Task<IEnumerable<int>> GetBookedSeats(int busId)
+        {
+            try
+            {
+                using var connection = _dbContext.CreateConnection();
+                string sql = "SELECT SeatNumber FROM Bookings WHERE BusId = @BusId";
+                return await connection.QueryAsync<int>(sql, new { BusId = busId });
+            }
+            catch (Exception ex)
+            {
+                return Enumerable.Empty<int>();
+            }
+        }
+
+        public async Task<int> CancelBooking(int bookingId)
+        {
+            try
+            {
+                using var connection = _dbContext.CreateConnection();
+                string sql = "DELETE FROM Bookings WHERE BookingId = @BookingId";
+                return await connection.ExecuteAsync(sql, new { BookingId = bookingId });
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
         }
     }
 }

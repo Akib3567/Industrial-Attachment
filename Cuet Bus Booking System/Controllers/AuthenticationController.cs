@@ -10,12 +10,12 @@ namespace Cuet_Bus_Booking_System.Controllers
     public class AuthenticationController : Controller
     {
         private readonly ILogger<AuthenticationController> _logger;
-        private readonly IUserRepository _userRepository;
+        private readonly IAuthRepository _authRepository;
 
-        public AuthenticationController(ILogger<AuthenticationController> logger, IUserRepository userRepository)
+        public AuthenticationController(ILogger<AuthenticationController> logger, IAuthRepository userRepository)
         {
             _logger = logger;
-            _userRepository = userRepository;
+            _authRepository = userRepository;
         }
 
         public IActionResult Login()
@@ -27,64 +27,34 @@ namespace Cuet_Bus_Booking_System.Controllers
             return View();
         }
 
-        //// POST: /Authentication/Signup
-        //[HttpPost]
-        //public IActionResult Signup(string Name, string Email, string Password, string StudentId)
-        //{
-        //    string emailPattern = @"^u\d{7}@student\.cuet\.ac\.bd$";
-
-        //    if (!Regex.IsMatch(Email, emailPattern))
-        //    {
-        //        ModelState.AddModelError("Email", "Please enter a valid CUET student email (e.g., u1234567@student.cuet.ac.bd).");
-        //        return View(); 
-        //    }
-
-        //    _logger.LogInformation($"Name: {Name}, Email: {Email}, Password: {Password}, StudentId: {StudentId}");
-
-        //    return RedirectToAction("Login");
-        //}
-
         [HttpPost]
         public IActionResult Signup(User user)
         {
             if (user != null)
             {
-                _userRepository.CreateAsync(user);
+                _authRepository.CreateAsync(user);
             }
             return RedirectToAction("Login");
         }
 
-        /*[HttpPost]
-        public async Task<IActionResult> Authenticate(User user)
-        {
-            var result = await _userRepository.LoginAsync(user);
-
-            if (result != null)
-            {
-                return RedirectToAction("Login");
-            }
-
-            return RedirectToAction("Login");
-        }*/
         [HttpPost]
         public async Task<IActionResult> Authenticate(User user)
         {
             // Authenticate the user and fetch their role from the database
-            var result = await _userRepository.LoginAsync(user);
+            var result = await _authRepository.LoginAsync(user);
 
             if (result != null)
             {
-                if (result.Role == "admin")
+                if (result.Role?.ToUpper() == "ADMIN")
                 {
-                    return RedirectToAction("Signup", "Authentication");  // Modify to 'AdminPage' when ready
+                    return RedirectToAction("Adminpage", "Bus");
                 }
-                else if (result.Role == "STUDENT")
+                else if (result.Role?.ToUpper() == "STUDENT")
                 {
-                    return RedirectToAction("Signup", "Authentication");  // Modify to 'UserPage' when ready
+                    return RedirectToAction("userIndex", "User");
                 }
             }
 
-            // If login fails
             ViewBag.ErrorMessage = "Invalid credentials!";
             return View("Login"); 
         }

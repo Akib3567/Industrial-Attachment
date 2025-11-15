@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Cuet_Bus_Booking_System.Models.BookingDetails>
+
+<div class="mb-3">
+    <label for="busFilter" class="form-label fw-semibold">Filter by Bus</label>
+    <select id="busFilter" class="form-select" style="max-width: 300px;">
+        <option value="">All Buses</option>
+        @foreach (var bus in Model.Select(b => b.BusName).Distinct())
+        {
+            <option value="@bus">@bus</option>
+        }
+    </select>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table mb-0 align-middle" id="adminBookingTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Bus Name</th>
+                    <th>Student Name</th>
+                    <th>Student ID</th>
+                    <th>Seat No.</th>
+                    <th>Date</th>
+                    <th>Schedule</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var booking in Model)
+                    {
+                        <tr data-bus="@booking.BusName">
+                            <td>@booking.BusName</td>
+                            <td>John Doe</td>
+                            <td>@booking.UserId</td>
+                            <td>@booking.SeatNumber</td>
+                            <td>@booking.BookingDate.ToString("yyyy-MM-dd")</td>
+                            <td>@booking.ScheduleTime</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr id="noBookingsRow">
+                        <td colspan="6" class="text-center py-4">No bookings found</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const busFilter = document.getElementById('busFilter');
+    const adminBookingTable = document.getElementById('adminBookingTable');
+
+    if (busFilter) {
+        busFilter.addEventListener('change', function () {
+            const selectedBus = this.value.toLowerCase();
+            const rows = adminBookingTable.querySelectorAll('tbody tr');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                if (row.id === 'noBookingsRow') return;
+
+                const busName = row.dataset.bus.toLowerCase();
+
+                if (selectedBus === '' || busName === selectedBus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const noBookingsRow = document.getElementById('noBookingsRow');
+            if (noBookingsRow) {
+                noBookingsRow.style.display = visibleCount === 0 ? '' : 'none';
+            } else if (visibleCount === 0) {
+                const tbody = adminBookingTable.querySelector('tbody');
+                const newRow = tbody.insertRow();
+                newRow.id = 'noBookingsRow';
+                newRow.innerHTML = '<td colspan="6" class="text-center py-4">No bookings found for selected bus</td>';
+            }
+        });
+    }
+</script>

@@ -13,7 +13,9 @@ builder.Services.AddSingleton<IDbContext>(sp =>
     return new DapperDbContext(connectionString!);
 });
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IBusRepository, BusRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();  
 
 var app = builder.Build();
 

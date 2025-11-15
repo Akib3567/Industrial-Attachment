@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Cuet_Bus_Booking_System.Models.CuetBus>
+
+@{
     Layout = null;
 }
 
@@ -8,6 +10,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CUET Bus Booking System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
     <style>
         body {
@@ -63,7 +66,7 @@
             background: white;
             padding: 26px;
             margin: 20px auto;
-            width: 92%;
+            max-width: 1200px;
             border-radius: 12px;
             border: 1px solid #e5e7eb;
         }
@@ -77,16 +80,19 @@
         label {
             font-size: 18px;
             font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
         }
 
-        .row {
-            display: flex;
+        .select-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 32px;
-            align-items: flex-start;
+            margin-bottom: 20px;
         }
 
         select, input[type="date"] {
-            width: 420px;
+            width: 100%;
             height: 56px;
             font-size: 18px;
             padding: 0 14px;
@@ -101,7 +107,6 @@
             border-radius: 12px;
             font-size: 18px;
             margin-top: 16px;
-            width: 100%;
             border: 1px solid #cddfff;
         }
 
@@ -111,7 +116,6 @@
 
         .seat-section {
             display: none;
-            margin: 26px;
         }
 
         .seat-grid {
@@ -170,6 +174,7 @@
             margin-top: 22px;
             font-size: 20px;
             font-weight: 600;
+            color: #16a34a;
         }
 
         .cancel-btn {
@@ -187,6 +192,21 @@
             .cancel-btn:hover {
                 background: #dc2626;
             }
+
+        .content-section {
+            display: none;
+        }
+
+            .content-section.active {
+                display: block;
+            }
+
+
+        .seat-grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        }
     </style>
 </head>
 
@@ -201,98 +221,141 @@
     </div>
 
     <div class="nav-buttons">
-        <button class="nav-btn active">Book a Seat</button>
-        <button class="nav-btn">My Bookings</button>
+        <button class="nav-btn active" data-section="booking">Book a Seat</button>
+        <button class="nav-btn" data-section="myBookings">My Bookings</button>
     </div>
 
-    <div class="container">
-        <div class="section-title">Select Bus and Date</div>
+    <div id="bookingSection" class="content-section active">
+        <div class="container">
+            <div class="section-title">Select Bus and Date</div>
 
-        <div class="row">
-            <div>
-                <label>Select Bus</label><br>
-                <select id="busSelect">
-                    <option value="">Choose a bus</option>
-                    <option value="Padma">Padma</option>
-                    <option value="Meghna">Meghna</option>
-                    <option value="Jamuna">Jamuna</option>
-                    <option value="Karnafuli">Karnafuli</option>
-                </select>
+            <div class="select-row">
+                <div>
+                    <label>Select Bus</label>
+                    <select id="busSelect">
+                        <option value="">Choose a bus</option>
+                        @foreach (var bus in Model)
+                        {
+                            <option value="@bus.BusId" data-name="@bus.BusName" data-time="@bus.ScheduleTime" data-seats="@bus.TotalSeats">@bus.BusName</option>
+                        }
+                    </select>
 
-                <div id="busCard" class="bus-card"></div>
+                    <div id="busCard" class="bus-card"></div>
+                </div>
+
+                <div>
+                    <label>Select Date</label>
+                    <input type="date" id="dateSelect">
+                </div>
             </div>
+        </div>
 
-            <div>
-                <label>Select Date</label><br>
-                <input type="date" id="dateSelect">
-            </div>
+        <div class="container seat-section" id="seatSection">
+            <div class="section-title">Select Your Seat</div>
+
+            <div class="seat-grid" id="seatGrid"></div>
+
+            <button id="confirmBtn" class="confirm-btn">Confirm Booking</button>
+
+            <div id="bookingMessage" class="booking-message"></div>
+
+            <button id="cancelBtn" class="cancel-btn" style="display:none;">Cancel Booking</button>
         </div>
     </div>
 
-    <div class="container seat-section" id="seatSection">
-        <div class="section-title">Select Your Seat</div>
-
-        <div class="seat-grid" id="seatGrid"></div>
-
-        <button id="confirmBtn" class="confirm-btn">Confirm Booking</button>
-
-        <div id="bookingMessage" class="booking-message"></div>
-
-        <button id="cancelBtn" class="cancel-btn" style="display:none;">Cancel Booking</button>
+    <div id="myBookingsSection" class="content-section">
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const busData = {
-            Padma: { time: "8:00 AM", route: "Campus to City", booked: [5, 8, 17] },
-            Meghna: { time: "9:00 AM", route: "Campus to City", booked: [2, 20, 33] },
-            Jamuna: { time: "7:30 AM", route: "City to Campus", booked: [1, 9, 10] },
-            Karnafuli: { time: "10:30 AM", route: "City to Campus", booked: [14, 22, 40] }
-        };
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const bookingSection = document.getElementById('bookingSection');
+        const myBookingsSection = document.getElementById('myBookingsSection');
+
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', async function () {
+                navButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const section = this.dataset.section;
+
+                if (section === 'booking') {
+                    bookingSection.classList.add('active');
+                    myBookingsSection.classList.remove('active');
+                } else if (section === 'myBookings') {
+                    bookingSection.classList.remove('active');
+                    myBookingsSection.classList.add('active');
+                    await loadMyBookings();
+                }
+            });
+        });
+
+        async function loadMyBookings() {
+            const userId = 1;
+            try {
+                const response = await fetch(`/User/GetMyBookings?userId=${userId}`);
+                const html = await response.text();
+                myBookingsSection.innerHTML = html;
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                myBookingsSection.innerHTML = '<div class="container mt-4"><p>Error loading bookings</p></div>';
+            }
+        }
 
         const busSelect = document.getElementById("busSelect");
         const busCard = document.getElementById("busCard");
         const seatSection = document.getElementById("seatSection");
         const seatGrid = document.getElementById("seatGrid");
-
         const confirmBtn = document.getElementById("confirmBtn");
         const bookingMessage = document.getElementById("bookingMessage");
         const cancelBtn = document.getElementById("cancelBtn");
 
         let selectedSeat = null;
+        let selectedBusId = null;
+        let currentBookingId = null;
 
-        busSelect.addEventListener("change", () => {
+        busSelect.addEventListener("change", async () => {
             selectedSeat = null;
+            selectedBusId = null;
+            currentBookingId = null;
             bookingMessage.style.display = "none";
             cancelBtn.style.display = "none";
 
-            const bus = busSelect.value;
+            const busId = busSelect.value;
 
-            if (bus === "") {
+            if (busId === "") {
                 busCard.style.display = "none";
                 seatSection.style.display = "none";
                 return;
             }
 
-            const info = busData[bus];
-            const available = 40 - info.booked.length;
+            selectedBusId = parseInt(busId);
+            const selectedOption = busSelect.options[busSelect.selectedIndex];
+            const busName = selectedOption.dataset.name;
+            const scheduleTime = selectedOption.dataset.time;
+            const totalSeats = parseInt(selectedOption.dataset.seats);
+
+            const bookedSeatsResponse = await fetch(`/User/GetBookedSeats?busId=${busId}`);
+            const bookedSeats = await bookedSeatsResponse.json();
+            const available = totalSeats - bookedSeats.length;
 
             busCard.innerHTML = `
-                <div><strong>${bus}</strong></div>
-                <div>${info.time} – ${info.route}</div>
-                <div>Available Seats: ${available} / 40</div>
-                <div>Booked: ${info.booked.length}</div>
+                <div><strong>${busName}</strong></div>
+                <div>${scheduleTime}</div>
+                <div>Available Seats: ${available} / ${totalSeats}</div>
+                <div>Booked: ${bookedSeats.length}</div>
             `;
             busCard.style.display = "block";
 
-            renderSeats(info.booked);
+            renderSeats(totalSeats, bookedSeats);
             seatSection.style.display = "block";
         });
 
-        function renderSeats(booked) {
+        function renderSeats(totalSeats, booked) {
             seatGrid.innerHTML = "";
             selectedSeat = null;
 
-            for (let i = 1; i <= 40; i++) {
+            for (let i = 1; i <= totalSeats; i++) {
                 const seatDiv = document.createElement("div");
                 seatDiv.className = "seat";
                 seatDiv.textContent = i;
@@ -313,20 +376,66 @@
             }
         }
 
-        confirmBtn.addEventListener("click", () => {
-            if (!selectedSeat) return;
+        confirmBtn.addEventListener("click", async () => {
+            if (!selectedSeat || !selectedBusId) {
+                alert("Please select a seat");
+                return;
+            }
 
-            bookingMessage.textContent = "You have booked seat no " + selectedSeat;
-            bookingMessage.style.display = "block";
+            const bookingData = {
+                UserId: 1,
+                BusId: selectedBusId,
+                SeatNumber: selectedSeat
+            };
 
-            cancelBtn.style.display = "block";
+            try {
+                const response = await fetch('/User/BookSeat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    currentBookingId = result.bookingId;
+                    bookingMessage.textContent = "You have booked seat no " + selectedSeat;
+                    bookingMessage.style.display = "block";
+                    cancelBtn.style.display = "block";
+                } else {
+                    alert(result.message || "Failed to book seat. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while booking the seat.");
+            }
         });
 
-        cancelBtn.addEventListener("click", () => {
-            bookingMessage.style.display = "none";
-            cancelBtn.style.display = "none";
-            document.querySelectorAll(".seat").forEach(s => s.classList.remove("selected"));
-            selectedSeat = null;
+        cancelBtn.addEventListener("click", async () => {
+            if (!currentBookingId) return;
+
+            try {
+                const response = await fetch(`/User/CancelBooking?bookingId=${currentBookingId}`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    alert("Booking cancelled successfully!");
+                    bookingMessage.style.display = "none";
+                    cancelBtn.style.display = "none";
+                    document.querySelectorAll(".seat").forEach(s => s.classList.remove("selected"));
+                    selectedSeat = null;
+                    currentBookingId = null;
+                    busSelect.dispatchEvent(new Event('change'));
+                } else {
+                    alert("Failed to cancel booking. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred while cancelling the booking.");
+            }
         });
     </script>
 
