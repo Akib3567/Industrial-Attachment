@@ -12,17 +12,19 @@ namespace Cuet_Bus_Booking_System.Controllers
         {
             _logger = logger;
         }
-
         public IActionResult Adminpage()
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        public IActionResult manageBooking()
         {
             return View();
         }
 
-       
+        public IActionResult viewBooking()
+        {
+            return View();
+        }
+
     }
 }
