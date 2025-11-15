@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Cuet_Bus_Booking_System.Models.User
+@{
+    
     Layout = null;
 }
 
@@ -221,35 +223,40 @@
             </div>
         }
 
-        <form method="post" action="/Authentication/Signup">
+        <form method="post" asp-controller="Authentication" asp-action="Signup">
             <div class="form-group">
-                <label>Name</label>
-                <input type="text" name="Name" required />
+                <label asp-for="Name">Name</label>
+                <input type="text" asp-for="Name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="Email" required />
+                <label asp-for="Email">Email</label>
+                <input type="email" asp-for="Email" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="Password" required />
+                <label asp-for="Password">Password</label>
+                <input type="password" asp-for="Password" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label>Student ID</label>
-                <input type="text" name="StudentId" required />
+                <label asp-for="StudentId">Student ID</label>
+                <input type="text" asp-for="StudentId" required />
+                <span asp-validation-for="StudentId" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn-signup">
-                Sign Up
-            </button>
+            <!-- Primary action -->
+            <button type="submit" class="btn-signup">Sign Up</button>
         </form>
 
+        <!-- Secondary action -->
         <a asp-controller="Authentication" asp-action="Login" class="btn-login">
             Already have an account? Login
         </a>
+
     </div>
 </body>
 </html>
