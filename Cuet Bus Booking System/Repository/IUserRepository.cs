@@ -5,5 +5,6 @@ namespace Cuet_Bus_Booking_System.Repository
     public interface IUserRepository
     {
         Task<int> CreateAsync(User user);
+        Task<User> LoginAsync(User user);
     }
 }

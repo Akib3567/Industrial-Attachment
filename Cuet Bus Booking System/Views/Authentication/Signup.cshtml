@@ -1,0 +1,262 @@
+﻿@model Cuet_Bus_Booking_System.Models.User
+@{
+    
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CUET Bus Booking - Sign Up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f4f8 0%, #d4e8e4 50%, #c8ddd4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-box {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            padding: 50px 45px;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+            .header h1 {
+                font-size: 32px;
+                font-weight: 700;
+                color: #2c3e50;
+                margin-bottom: 10px;
+                letter-spacing: -0.5px;
+            }
+
+            .header p {
+                font-size: 15px;
+                color: #7f8c8d;
+                line-height: 1.5;
+            }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: 15px;
+                font-weight: 600;
+                color: #34495e;
+                margin-bottom: 10px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 14px 18px;
+                border: 2px solid #e8ecef;
+                border-radius: 10px;
+                font-size: 15px;
+                background-color: #fafbfc;
+                transition: all 0.3s ease;
+            }
+
+                .form-group input:focus {
+                    outline: none;
+                    border-color: #3498db;
+                    background-color: white;
+                    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+                }
+
+        .btn-signup {
+            width: 100%;
+            padding: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+            .btn-signup:hover {
+                background: #2980b9;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            }
+
+            .btn-signup:active {
+                transform: translateY(0);
+            }
+
+            .btn-signup svg {
+                width: 20px;
+                height: 20px;
+            }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #3498db;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+            .btn-login:hover {
+                background: #3498db;
+                color: white;
+                transform: translateY(-2px);
+            }
+
+            .btn-login svg {
+                width: 20px;
+                height: 20px;
+            }
+
+        .test-info {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #ecf0f1;
+        }
+
+            .test-info h3 {
+                font-size: 14px;
+                font-weight: 700;
+                color: #34495e;
+                margin-bottom: 16px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .test-info p {
+                font-size: 14px;
+                color: #7f8c8d;
+                margin-bottom: 10px;
+                line-height: 1.6;
+            }
+
+            .test-info strong {
+                color: #2c3e50;
+                font-weight: 700;
+            }
+
+            .test-info code {
+                background: #ecf0f1;
+                padding: 4px 8px;
+                border-radius: 6px;
+                font-family: 'Courier New', monospace;
+                font-size: 13px;
+                color: #2c3e50;
+            }
+
+        .bolt-badge {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+            .bolt-badge svg {
+                width: 18px;
+                height: 18px;
+            }
+
+        .header h1 {
+            font-size: 26px;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-box">
+        <div class="header">
+            <h1>CUET Bus Booking</h1>
+            <p>Chittagong University of Engineering and Technology</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@error.ErrorMessage</p>
+                }
+            </div>
+        }
+
+        <form method="post" asp-controller="Authentication" asp-action="Signup">
+            <div class="form-group">
+                <label asp-for="Name">Name</label>
+                <input type="text" asp-for="Name" required />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input type="email" asp-for="Email" required />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input type="password" asp-for="Password" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StudentId">Student ID</label>
+                <input type="text" asp-for="StudentId" required />
+                <span asp-validation-for="StudentId" class="text-danger"></span>
+            </div>
+
+            <!-- Primary action -->
+            <button type="submit" class="btn-signup">Sign Up</button>
+        </form>
+
+        <!-- Secondary action -->
+        <a asp-controller="Authentication" asp-action="Login" class="btn-login">
+            Already have an account? Login
+        </a>
+
+    </div>
+</body>
+</html>

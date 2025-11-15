@@ -29,5 +29,19 @@ namespace Cuet_Bus_Booking_System.Repository
                 user.Password
             });
         }
+
+        public async Task<User> LoginAsync(User user)
+        {
+            using var connection = _dbContext.CreateConnection();
+            string sql = @"SELECT * FROM [Users] WHERE Email = @Email AND Password = @Password";
+
+            var res =  await connection.QueryFirstOrDefaultAsync<User>(sql, new
+            {
+                user.Email,
+                user.Password
+            });
+
+            return res;
+        }
     }
 }
