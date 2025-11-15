@@ -12,21 +12,18 @@ namespace Cuet_Bus_Booking_System.Controllers
         {
             _logger = logger;
         }
-
         public IActionResult userIndex()
         {
             return View();
         }
-
-        public IActionResult Privacy()
+        public IActionResult seatBooking()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult myBooking()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

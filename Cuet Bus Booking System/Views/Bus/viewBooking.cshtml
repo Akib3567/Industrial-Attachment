@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "CUET Bus Management";
+}
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+
+    <!-- Header -->
+    <nav class="navbar navbar-light bg-white shadow-sm px-4 py-3">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-0 fw-bold">CUET Bus Management</h4>
+                <small class="text-muted">Welcome, Admin User</small>
+            </div>
+            <a href="/Account/Logout" class="btn btn-outline-dark">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="container mt-4">
+        <!-- Top buttons -->
+        <div class="d-flex mb-4">
+            <a href="/Bus/manageBooking" class="btn btn-outline-secondary me-3 px-4 py-2">Manage Buses</a>
+            <a href="/Bus/viewBooking" class="btn btn-primary px-4 py-2">View Bookings</a>
+        </div>
+
+        <!-- Filter -->
+        <div class="mb-3">
+            <label for="busFilter" class="form-label fw-semibold">Filter by Bus</label>
+            <select id="busFilter" class="form-select" style="max-width: 200px;">
+                <option>All Buses</option>
+                <option>Padma</option>
+                <option>Meghna</option>
+                <option>Jamuna</option>
+            </select>
+        </div>
+
+        <!-- Table -->
+        <div class="card border-0 shadow-sm">
+            <div class="table-responsive">
+                <table class="table mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Bus Name</th>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Seat No.</th>
+                            <th>Date</th>
+                            <th>Schedule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Padma</td>
+                            <td>John Doe</td>
+                            <td>1801001</td>
+                            <td>5</td>
+                            <td>2025-11-11</td>
+                            <td>8:00 AM - Campus to City</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
