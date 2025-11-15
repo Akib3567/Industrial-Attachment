@@ -17,7 +17,7 @@ namespace Cuet_Bus_Booking_System.Repository
         public async Task<int> CreateAsync(User user)
         {
             using var connection = _dbContext.CreateConnection();
-            string sql = @"INSERT INTO Buses (StudentId, Name, Email, Password) 
+            string sql = @"INSERT INTO Users (StudentId, Name, Email, Password) 
                           VALUES (@StudentId, @Name, @Email, @Password);
                           SELECT CAST(SCOPE_IDENTITY() as int)";
 

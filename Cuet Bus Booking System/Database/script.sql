@@ -1,10 +1,10 @@
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'CuetTransportDB')
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'CUETTransportDB')
 BEGIN
-    CREATE DATABASE CuetTransportDB;
+    CREATE DATABASE CUETTransportDB;
 END
 GO
 
-USE CuetTransportDB;
+USE CUETTransportDB;
 GO
 
 IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Users' AND type = 'U')
